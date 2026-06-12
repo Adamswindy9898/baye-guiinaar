@@ -48,8 +48,9 @@ export default function InscriptionPage() {
       window.open(`https://wa.me/221783290324?text=${msg}`, '_blank');
 
       router.push('/dashboard');
-    } catch {
-      setError('Erreur lors de l\'inscription. Cet email est peut-etre deja utilise.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur inconnue';
+      setError('Erreur: ' + message);
     } finally {
       setLoading(false);
     }
