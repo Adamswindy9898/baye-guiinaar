@@ -1,6 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="32" fill="#15803d"/>
-  <text x="96" y="80" text-anchor="middle" font-size="60" fill="white" font-family="Arial, sans-serif" font-weight="bold">Sen</text>
-  <text x="96" y="130" text-anchor="middle" font-size="40" fill="#fbbf24" font-family="Arial, sans-serif" font-weight="bold">Agro</text>
-  <text x="96" y="165" text-anchor="middle" font-size="24" fill="white">🌾</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <!-- Fond vert -->
+  <rect width="192" height="192" rx="40" fill="#16a34a"/>
+  <!-- Corps du poulet -->
+  <ellipse cx="96" cy="90" rx="45" ry="38" fill="white"/>
+  <!-- Tete -->
+  <circle cx="96" cy="55" r="26" fill="white"/>
+  <!-- Crete rouge bien visible -->
+  <path d="M84 30 Q89 15 96 27 Q103 15 108 30" fill="#dc2626" stroke="#dc2626" stroke-width="2"/>
+  <!-- Oeil -->
+  <circle cx="88" cy="52" r="5" fill="#1a1a1a"/>
+  <circle cx="87" cy="50" r="2" fill="white"/>
+  <!-- Bec orange -->
+  <polygon points="105,58 118,64 105,70" fill="#f59e0b"/>
+  <!-- Aile -->
+  <ellipse cx="84" cy="95" rx="18" ry="14" fill="#e5e7eb" transform="rotate(-10 84 95)"/>
+  <!-- Pattes -->
+  <line x1="84" y1="124" x2="80" y2="142" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+  <line x1="108" y1="124" x2="112" y2="142" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+  <!-- Texte -->
+  <text x="96" y="172" text-anchor="middle" font-size="24" fill="white" font-family="Arial, sans-serif" font-weight="bold">BAYE GUIINAAR</text>
 </svg>

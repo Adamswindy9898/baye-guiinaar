@@ -1,13 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60">
-  <!-- Icone poulet stylise -->
-  <circle cx="30" cy="30" r="26" fill="#fbbf24" opacity="0.15"/>
-  <circle cx="30" cy="26" r="14" fill="#fbbf24"/>
-  <ellipse cx="30" cy="29" rx="9" ry="8" fill="white"/>
-  <circle cx="27" cy="26" r="1.5" fill="#15803d"/>
-  <polygon points="30,30 28,33 32,33" fill="#ef4444"/>
-  <path d="M18 24 Q16 19 21 17" stroke="#fbbf24" stroke-width="1.5" fill="none"/>
-  <!-- Texte -->
-  <text x="65" y="28" font-size="20" fill="#15803d" font-family="Arial, sans-serif" font-weight="bold">Baye</text>
-  <text x="115" y="28" font-size="20" fill="#fbbf24" font-family="Arial, sans-serif" font-weight="bold">Guiinaar</text>
-  <text x="65" y="46" font-size="10" fill="#6b7280" font-family="Arial, sans-serif">Marketplace Agricole du Senegal</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60">
+  <!-- Fond cercle vert -->
+  <circle cx="30" cy="30" r="28" fill="#16a34a"/>
+  <!-- Poulet blanc -->
+  <ellipse cx="30" cy="34" rx="14" ry="11" fill="white"/>
+  <circle cx="30" cy="22" r="9" fill="white"/>
+  <!-- Crete -->
+  <path d="M26 14 Q28 9 30 13 Q32 9 34 14" fill="#dc2626"/>
+  <!-- Oeil -->
+  <circle cx="28" cy="21" r="2" fill="#1a1a1a"/>
+  <circle cx="27.5" cy="20.5" r="0.7" fill="white"/>
+  <!-- Bec -->
+  <polygon points="33,23 38,25 33,27" fill="#f59e0b"/>
+  <!-- Aile -->
+  <ellipse cx="27" cy="36" rx="6" ry="5" fill="#e5e7eb" transform="rotate(-10 27 36)"/>
+  <!-- Texte principal -->
+  <text x="70" y="30" font-size="22" fill="#16a34a" font-family="Arial, sans-serif" font-weight="900">Baye</text>
+  <text x="122" y="30" font-size="22" fill="#f59e0b" font-family="Arial, sans-serif" font-weight="900">Guiinaar</text>
+  <!-- Sous-titre -->
+  <text x="70" y="48" font-size="11" fill="#4b5563" font-family="Arial, sans-serif" font-weight="600">Marketplace Agricole du Senegal</text>
 </svg>

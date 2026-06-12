@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Product } from '@/data/products';
+import Chatbot from '@/components/Chatbot';
 
 interface Testimonial {
   id: string;
@@ -324,6 +325,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Chatbot />
     </div>
   );
 }
