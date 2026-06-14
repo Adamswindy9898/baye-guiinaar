@@ -14,7 +14,6 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/" className="hover:text-green-400 transition">Accueil</Link></li>
               <li><Link href="/produits" className="hover:text-green-400 transition">Produits</Link></li>
-              <li><Link href="/poulailler-intelligent" className="hover:text-green-400 transition">Poulailler intelligent</Link></li>
               <li><Link href="/vendeur" className="hover:text-green-400 transition">Devenir vendeur</Link></li>
               <li><Link href="/faq" className="hover:text-green-400 transition">FAQ</Link></li>
               <li><Link href="/contact" className="hover:text-green-400 transition">Contact</Link></li>
@@ -35,10 +34,30 @@ export default function Footer() {
               <li>📍 Keur Issa, Thies, Senegal</li>
               <li>📞 +221 78 329 03 24</li>
               <li><a href="https://wa.me/221783290324" target="_blank" className="hover:text-green-400 transition">💬 WhatsApp</a></li>
+              <li><a href="https://wa.me/?text=Salut%20!%20Decouvre%20Baye%20Guiinaar%20pour%20commander%20des%20poulets%20frais%20au%20Senegal.%20Prix%20direct%20producteur%20%3A%20https%3A%2F%2Fbaye-guiinaar.vercel.app" target="_blank" className="hover:text-green-400 transition">📤 Partager le site</a></li>
               <li><a href="mailto:gayea591@gmail.com?subject=Probleme%20vendeur%20-%20Baye%20Guiinaar" className="hover:text-green-400 transition">📧 gayea591@gmail.com</a></li>
             </ul>
           </div>
         </div>
+        {/* Services numeriques */}
+        <div className="border-t border-gray-700 mt-8 pt-8">
+          <div className="bg-gray-800 rounded-xl p-6 md:flex md:items-center md:justify-between gap-6">
+            <div className="mb-4 md:mb-0">
+              <h4 className="text-white font-bold text-lg mb-1">💻 Besoin d&apos;un site web ou d&apos;un logiciel ?</h4>
+              <p className="text-sm text-gray-400">
+                Sites vitrines, e-commerce, applications sur mesure, systemes IoT — on cree votre solution numerique. Prix adaptes au Senegal.
+              </p>
+            </div>
+            <a
+              href="https://wa.me/221783290324?text=Bonjour%2C%20je%20suis%20interesse%20par%20vos%20services%20de%20creation%20de%20site%20web%20%2F%20logiciel."
+              target="_blank"
+              className="inline-flex items-center gap-2 bg-indigo-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:bg-indigo-700 transition whitespace-nowrap"
+            >
+              📱 Contacter
+            </a>
+          </div>
+        </div>
+
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
           <p>&copy; 2026 Baye Guiinaar - Tous droits reserves</p>
           <p className="mt-2 text-gray-400">

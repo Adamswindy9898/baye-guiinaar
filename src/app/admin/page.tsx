@@ -69,7 +69,23 @@ interface Testimonial {
   created_at: string;
 }
 
-const ADMIN_EMAIL = 'gayea591@gmail.com';
+interface Announcement {
+  id: string;
+  title: string;
+  description: string;
+  type: 'text' | 'image' | 'video';
+  media_url: string;
+  link_url: string;
+  link_text: string;
+  bg_color: string;
+  text_color: string;
+  active: boolean;
+  sort_order: number;
+  created_at: string;
+  expires_at: string | null;
+}
+
+const ADMIN_EMAILS = ['gayea591@gmail.com'];
 
 const STATUS_OPTIONS = [
   { value: 'pending', label: 'En attente', color: 'bg-yellow-100 text-yellow-700' },
@@ -82,41 +98,47 @@ const STATUS_OPTIONS = [
 export default function AdminPage() {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
-  const [tab, setTab] = useState<'overview' | 'orders' | 'products' | 'sellers' | 'messages' | 'reviews'>('overview');
+  const [tab, setTab] = useState<'overview' | 'orders' | 'products' | 'sellers' | 'messages' | 'reviews' | 'announcements'>('overview');
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [announcementForm, setAnnouncementForm] = useState<{ title: string; description: string; type: 'text' | 'image' | 'video'; media_url: string; link_url: string; link_text: string; bg_color: string; text_color: string }>({ title: '', description: '', type: 'text', media_url: '', link_url: '', link_text: 'En savoir plus', bg_color: '#15803d', text_color: '#ffffff' });
+  const [editingAnnouncement, setEditingAnnouncement] = useState<string | null>(null);
 
-  const isAdmin = user && (profile?.email === ADMIN_EMAIL || user.email === ADMIN_EMAIL);
+  const isAdmin = !!(user && (profile?.role === 'admin' || ADMIN_EMAILS.includes(user.email || '')));
 
   useEffect(() => {
     if (!loading && !isAdmin) {
       router.push('/');
     }
-  }, [user, profile, loading, router, isAdmin]);
+  }, [loading, isAdmin, router]);
 
   useEffect(() => {
     if (isAdmin) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
   const loadData = async () => {
-    const [usersRes, ordersRes, productsRes, messagesRes, testimonialsRes] = await Promise.all([
+    const [usersRes, ordersRes, productsRes, messagesRes, testimonialsRes, announcementsRes] = await Promise.all([
       supabase.from('profiles').select('*').order('created_at', { ascending: false }),
       supabase.from('orders').select('*').order('created_at', { ascending: false }),
       supabase.from('products').select('*').order('created_at', { ascending: false }),
       supabase.from('messages').select('*').order('created_at', { ascending: false }),
       supabase.from('testimonials').select('*').order('created_at', { ascending: false }),
+      supabase.from('announcements').select('*').order('sort_order', { ascending: true }),
     ]);
     setUsers(usersRes.data || []);
     setOrders(ordersRes.data || []);
     setProducts(productsRes.data || []);
     setMessages(messagesRes.data || []);
     setTestimonials(testimonialsRes.data || []);
+    setAnnouncements(announcementsRes.data || []);
   };
 
   const handleChangeOrderStatus = async (orderId: string, newStatus: string) => {
@@ -200,6 +222,7 @@ export default function AdminPage() {
           { id: 'products', label: `Produits (${products.length})` },
           { id: 'sellers', label: `Vendeurs (${sellers.length})` },
           { id: 'messages', label: `Messages (${messages.filter(m => !m.read).length})` },
+          { id: 'announcements', label: `Annonces (${announcements.length})` },
           { id: 'reviews', label: `Avis (${testimonials.filter(t => !t.approved).length})` },
         ].map(t => (
           <button
@@ -551,7 +574,6 @@ export default function AdminPage() {
           <div className="divide-y">
             {sellers.map(s => {
               const sellerProducts = products.filter(p => p.seller_id === s.id);
-              const sellerOrders = orders.filter(o => o.items?.some(i => i.seller === s.business || i.seller === s.name));
               const isBlocked = s.role === 'blocked';
 
               return (
@@ -702,6 +724,276 @@ export default function AdminPage() {
               </div>
             ))}
             {testimonials.length === 0 && <p className="p-6 text-center text-gray-500">Aucun avis recu</p>}
+          </div>
+        </div>
+      )}
+
+      {/* Announcements */}
+      {tab === 'announcements' && (
+        <div>
+          {/* Formulaire ajout/edition */}
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h2 className="font-bold text-gray-800 mb-4">
+              {editingAnnouncement ? 'Modifier l\'annonce' : 'Ajouter une annonce'}
+            </h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!announcementForm.title) return;
+                if (editingAnnouncement) {
+                  await supabase.from('announcements').update({
+                    title: announcementForm.title,
+                    description: announcementForm.description || null,
+                    type: announcementForm.type,
+                    media_url: announcementForm.media_url || null,
+                    link_url: announcementForm.link_url || null,
+                    link_text: announcementForm.link_text || 'En savoir plus',
+                    bg_color: announcementForm.bg_color,
+                    text_color: announcementForm.text_color,
+                  }).eq('id', editingAnnouncement);
+                } else {
+                  await supabase.from('announcements').insert({
+                    title: announcementForm.title,
+                    description: announcementForm.description || null,
+                    type: announcementForm.type,
+                    media_url: announcementForm.media_url || null,
+                    link_url: announcementForm.link_url || null,
+                    link_text: announcementForm.link_text || 'En savoir plus',
+                    bg_color: announcementForm.bg_color,
+                    text_color: announcementForm.text_color,
+                    sort_order: announcements.length + 1,
+                  });
+                }
+                setAnnouncementForm({ title: '', description: '', type: 'text', media_url: '', link_url: '', link_text: 'En savoir plus', bg_color: '#15803d', text_color: '#ffffff' });
+                setEditingAnnouncement(null);
+                loadData();
+              }}
+              className="space-y-4"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Titre *</label>
+                  <input
+                    type="text"
+                    required
+                    value={announcementForm.title}
+                    onChange={e => setAnnouncementForm({ ...announcementForm, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    placeholder="Ex: Nouvelle promotion !"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                  <select
+                    value={announcementForm.type}
+                    onChange={e => setAnnouncementForm({ ...announcementForm, type: e.target.value as typeof announcementForm.type })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                  >
+                    <option value="text">Texte seul</option>
+                    <option value="image">Image + texte</option>
+                    <option value="video">Video + texte</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={announcementForm.description}
+                  onChange={e => setAnnouncementForm({ ...announcementForm, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none h-20 resize-none"
+                  placeholder="Description de l'annonce..."
+                />
+              </div>
+
+              {(announcementForm.type === 'image' || announcementForm.type === 'video') && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    URL {announcementForm.type === 'image' ? 'de l\'image' : 'de la video'}
+                  </label>
+                  <input
+                    type="url"
+                    value={announcementForm.media_url}
+                    onChange={e => setAnnouncementForm({ ...announcementForm, media_url: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    placeholder="https://..."
+                  />
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Lien (optionnel)</label>
+                  <input
+                    type="text"
+                    value={announcementForm.link_url}
+                    onChange={e => setAnnouncementForm({ ...announcementForm, link_url: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    placeholder="/produits ou https://..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Texte du bouton</label>
+                  <input
+                    type="text"
+                    value={announcementForm.link_text}
+                    onChange={e => setAnnouncementForm({ ...announcementForm, link_text: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    placeholder="En savoir plus"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Couleur fond</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={announcementForm.bg_color}
+                      onChange={e => setAnnouncementForm({ ...announcementForm, bg_color: e.target.value })}
+                      className="w-10 h-10 rounded border-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-gray-500">{announcementForm.bg_color}</span>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Couleur texte</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={announcementForm.text_color}
+                      onChange={e => setAnnouncementForm({ ...announcementForm, text_color: e.target.value })}
+                      className="w-10 h-10 rounded border-0 cursor-pointer"
+                    />
+                    <span className="text-xs text-gray-500">{announcementForm.text_color}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Apercu</label>
+                <div
+                  className="rounded-xl p-6 min-h-[100px]"
+                  style={{ background: announcementForm.bg_color }}
+                >
+                  <h3 className="text-xl font-bold mb-1" style={{ color: announcementForm.text_color }}>
+                    {announcementForm.title || 'Titre de l\'annonce'}
+                  </h3>
+                  {announcementForm.description && (
+                    <p className="text-sm opacity-90" style={{ color: announcementForm.text_color }}>
+                      {announcementForm.description}
+                    </p>
+                  )}
+                  {announcementForm.link_text && announcementForm.link_url && (
+                    <span className="inline-block mt-3 bg-white text-gray-800 px-4 py-2 rounded-lg text-xs font-bold">
+                      {announcementForm.link_text}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  className="bg-green-700 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-green-800 transition"
+                >
+                  {editingAnnouncement ? 'Mettre a jour' : 'Ajouter l\'annonce'}
+                </button>
+                {editingAnnouncement && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingAnnouncement(null);
+                      setAnnouncementForm({ title: '', description: '', type: 'text', media_url: '', link_url: '', link_text: 'En savoir plus', bg_color: '#15803d', text_color: '#ffffff' });
+                    }}
+                    className="text-gray-500 text-sm hover:text-gray-700"
+                  >
+                    Annuler
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+
+          {/* Liste des annonces */}
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="p-4 border-b">
+              <h2 className="font-bold text-gray-800">Annonces actives ({announcements.filter(a => a.active).length}/{announcements.length})</h2>
+            </div>
+            <div className="divide-y">
+              {announcements.map((a, index) => (
+                <div key={a.id} className="p-4 hover:bg-gray-50">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex items-start gap-3 flex-1">
+                      <div
+                        className="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+                        style={{ background: a.bg_color }}
+                      >
+                        {a.type === 'image' ? '🖼' : a.type === 'video' ? '🎬' : '📝'}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-gray-800">{a.title}</span>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${a.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                            {a.active ? 'Active' : 'Inactive'}
+                          </span>
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                            {a.type}
+                          </span>
+                        </div>
+                        {a.description && <p className="text-sm text-gray-600 line-clamp-1">{a.description}</p>}
+                        <p className="text-xs text-gray-400 mt-1">Ordre: {a.sort_order} | Cree le {new Date(a.created_at).toLocaleDateString('fr-FR')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setEditingAnnouncement(a.id);
+                          setAnnouncementForm({
+                            title: a.title,
+                            description: a.description || '',
+                            type: a.type,
+                            media_url: a.media_url || '',
+                            link_url: a.link_url || '',
+                            link_text: a.link_text || 'En savoir plus',
+                            bg_color: a.bg_color,
+                            text_color: a.text_color,
+                          });
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium"
+                      >
+                        Modifier
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await supabase.from('announcements').update({ active: !a.active }).eq('id', a.id);
+                          loadData();
+                        }}
+                        className={`text-xs px-3 py-1.5 rounded-lg font-medium ${a.active ? 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
+                      >
+                        {a.active ? 'Desactiver' : 'Activer'}
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (!confirm('Supprimer cette annonce ?')) return;
+                          await supabase.from('announcements').delete().eq('id', a.id);
+                          loadData();
+                        }}
+                        className="text-xs px-3 py-1.5 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {announcements.length === 0 && (
+                <p className="p-6 text-center text-gray-500">Aucune annonce. Ajoutez-en une ci-dessus.</p>
+              )}
+            </div>
           </div>
         </div>
       )}

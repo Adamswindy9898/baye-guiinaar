@@ -24,7 +24,12 @@ export default function ConnexionPage() {
     setLoading(true);
     try {
       await signIn(email, password);
-      if (email === 'gayea591@gmail.com') {
+      const { data } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('email', email)
+        .single();
+      if (data?.role === 'admin') {
         router.push('/admin');
       } else {
         router.push('/dashboard');

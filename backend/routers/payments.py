@@ -1,11 +1,13 @@
 import os
+import hmac
+import hashlib
 import httpx
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, field_validator
 
 router = APIRouter()
 
-PAYDUNYA_BASE_URL = "https://app.paydunya.com/sandbox-api/v1"
+PAYDUNYA_BASE_URL = os.getenv("PAYDUNYA_BASE_URL", "https://app.paydunya.com/sandbox-api/v1")
 PAYDUNYA_MASTER_KEY = os.getenv("PAYDUNYA_MASTER_KEY", "")
 PAYDUNYA_PRIVATE_KEY = os.getenv("PAYDUNYA_PRIVATE_KEY", "")
 PAYDUNYA_TOKEN = os.getenv("PAYDUNYA_TOKEN", "")
@@ -18,6 +20,21 @@ class PaymentRequest(BaseModel):
     customer_name: str
     customer_phone: str
     customer_email: str = ""
+
+    @field_validator("amount")
+    @classmethod
+    def amount_must_be_positive(cls, v: int) -> int:
+        if v <= 0:
+            raise ValueError("Le montant doit etre positif")
+        return v
+
+    @field_validator("customer_phone")
+    @classmethod
+    def phone_must_be_valid(cls, v: str) -> str:
+        cleaned = v.replace(" ", "").replace("+", "").replace("-", "")
+        if not cleaned.isdigit() or len(cleaned) < 9:
+            raise ValueError("Numero de telephone invalide")
+        return v
 
 
 class PaymentCallback(BaseModel):
@@ -76,10 +93,27 @@ async def initiate_payment(req: PaymentRequest):
 
 
 @router.post("/callback")
-async def payment_callback(callback: PaymentCallback):
-    # PayDunya envoie les données de confirmation ici
-    # Mettre à jour le statut de la commande dans Firestore
-    return {"status": "received"}
+async def payment_callback(request: Request):
+    body = await request.body()
+    signature = request.headers.get("X-PayDunya-Signature", "")
+
+    expected_sig = hmac.new(
+        PAYDUNYA_MASTER_KEY.encode(),
+        body,
+        hashlib.sha512
+    ).hexdigest()
+
+    if not hmac.compare_digest(signature, expected_sig):
+        raise HTTPException(status_code=403, detail="Signature invalide")
+
+    data = await request.json()
+    order_id = data.get("custom_data", {}).get("order_id")
+    status = data.get("status")
+
+    if not order_id:
+        raise HTTPException(status_code=400, detail="order_id manquant")
+
+    return {"status": "received", "order_id": order_id, "payment_status": status}
 
 
 @router.get("/verify/{token}")

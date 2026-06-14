@@ -11,8 +11,9 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Baye Guiinaar - Marketplace Agricole du Senegal",
-  description: "Achetez des poulets frais et produits agricoles au Senegal. Commande simple, paiement a la livraison. Baye Guiinaar, le maitre du poulailler.",
+  title: "Baye Guiinaar - Poulets Frais & Produits Agricoles au Senegal",
+  description: "Commandez des poulets de chair, oeufs frais et aliments de betail au Senegal. Prix direct producteur, livraison rapide a Thies, Dakar, Mbour. Paiement a la livraison.",
+  keywords: ["poulet frais senegal", "achat poulet dakar", "oeufs frais thies", "aliment betail senegal", "elevage poulet", "baye guiinaar", "marketplace agricole senegal", "livraison poulet"],
   manifest: "/manifest.json",
   themeColor: "#15803d",
   appleWebApp: {
@@ -21,20 +22,37 @@ export const metadata: Metadata = {
     title: "Baye Guiinaar",
   },
   openGraph: {
-    title: "Baye Guiinaar - Produits Agricoles Frais",
-    description: "Poulets frais, produits agricoles. Commandez en ligne, payez a la livraison. Partout au Senegal.",
+    title: "Baye Guiinaar - Poulets Frais Livres Chez Vous au Senegal",
+    description: "Prix direct producteur. Poulets de chair, oeufs, aliments de betail. Commandez sur WhatsApp, payez a la livraison. Thies, Dakar, Mbour, Touba.",
     type: "website",
     locale: "fr_SN",
     siteName: "Baye Guiinaar",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Baye Guiinaar - Poulets frais et produits agricoles au Senegal",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Baye Guiinaar - Produits Agricoles Frais",
-    description: "Poulets frais, produits agricoles. Commandez en ligne, payez a la livraison. Partout au Senegal.",
+    title: "Baye Guiinaar - Poulets Frais au Senegal",
+    description: "Prix direct producteur. Commandez sur WhatsApp, livraison rapide partout au Senegal.",
+    images: ["/og-image.svg"],
   },
   icons: {
     icon: "/favicon.svg",
     apple: "/icons/icon-192.png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
   },
 };
 

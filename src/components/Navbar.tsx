@@ -72,7 +72,6 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/produits" className="hover:text-green-200 transition">Produits</Link>
-                <Link href="/poulailler-intelligent" className="hover:text-green-200 transition">Poulailler intelligent</Link>
                 <Link href="/mes-commandes" className="hover:text-green-200 transition">Suivi commande</Link>
                 <Link href="/faq" className="hover:text-green-200 transition">FAQ</Link>
                 <Link href="/contact" className="hover:text-green-200 transition">Contact</Link>
@@ -135,7 +134,6 @@ export default function Navbar() {
             ) : (
               <>
                 <Link href="/produits" className="block py-2 hover:text-green-200" onClick={() => setMenuOpen(false)}>Produits</Link>
-                <Link href="/poulailler-intelligent" className="block py-2 hover:text-green-200" onClick={() => setMenuOpen(false)}>Poulailler intelligent</Link>
                 <Link href="/mes-commandes" className="block py-2 hover:text-green-200" onClick={() => setMenuOpen(false)}>Suivi commande</Link>
                 <Link href="/faq" className="block py-2 hover:text-green-200" onClick={() => setMenuOpen(false)}>FAQ</Link>
                 <Link href="/contact" className="block py-2 hover:text-green-200" onClick={() => setMenuOpen(false)}>Contact</Link>

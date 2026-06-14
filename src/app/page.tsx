@@ -4,6 +4,7 @@ import Hero from '@/components/Hero';
 import CategorySection from '@/components/CategorySection';
 import WhyUs from '@/components/WhyUs';
 import ProductCard from '@/components/ProductCard';
+import AnnouncementCarousel from '@/components/AnnouncementCarousel';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -85,6 +86,7 @@ export default function Home() {
   return (
     <div>
       <Hero />
+      <AnnouncementCarousel />
       <CategorySection />
 
       {/* Produits populaires */}

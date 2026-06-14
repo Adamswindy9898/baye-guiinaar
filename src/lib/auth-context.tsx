@@ -9,7 +9,7 @@ interface UserProfile {
   name: string;
   phone: string;
   email: string;
-  role: 'buyer' | 'seller';
+  role: 'buyer' | 'seller' | 'admin' | 'blocked';
   location: string;
   business?: string;
   created_at: string;
@@ -29,7 +29,7 @@ interface SignUpData {
   email: string;
   password: string;
   phone: string;
-  role: 'buyer' | 'seller';
+  role: 'buyer' | 'seller' | 'admin' | 'blocked';
   location: string;
   business?: string;
   address?: string;
